@@ -36,12 +36,15 @@ jobs:
       - name: Install dependencies
         run: |
           choco install -y mingw
+          mkdir w64devkit
+          Invoke-WebRequest -Uri 'https://github.com/skeeto/w64devkit/releases/download/v1.22.0/w64devkit-1.22.0.zip' -OutFile 'w64devkit/w64devkit.zip'
           Invoke-WebRequest -Uri 'https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip' -OutFile 'raylib.zip'
           tar -xf raylib.zip
-          mv raylib*/include %programdata%/mingw64/mingw64
-          mv raylib*/lib %programdata%/mingw64/mingw64
+          tar -xf w64devkit/w64devkit.zip
+          mv raylib*/include w64devkit/x86*/
+          mv raylib*/lib w64devkit/x86*/
       - name: Compile
-        run: make build
+        run: w64devkit/bin/make.exe build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
