@@ -36,10 +36,10 @@ jobs:
       - name: Install dependencies
         run: |
           mkdir w64devkit
-          Invoke-WebRequest -Uri 'https://github.com/skeeto/w64devkit/releases/download/v1.22.0/w64devkit-1.22.0.zip' -OutFile 'w64devkit/w64devkit.zip'
+          Invoke-WebRequest -Uri 'https://github.com/skeeto/w64devkit/releases/download/v1.23.0/w64devkit-1.23.0.zip' -OutFile 'w64devkit.zip'
           Invoke-WebRequest -Uri 'https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip' -OutFile 'raylib.zip'
           tar -xf raylib.zip
-          tar -xf w64devkit/w64devkit.zip
+          tar -xf w64devkit.zip
           mv raylib-5.5_win64_mingw-w64/include/* w64devkit/x86_64-w64-mingw32/include/
           mv raylib-5.5_win64_mingw-w64/lib/* w64devkit/x86_64-w64-mingw32/lib/
           $Env:PATH += ";%cd%/w64devkit/bin"
