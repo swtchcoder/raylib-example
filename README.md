@@ -11,7 +11,7 @@ This is an example project using raylib
 > Unzip to `C:\w64devkit`
 
 2. Download `raylib-5.0_win64_mingw-w64.zip` from https://github.com/raysan5/raylib/releases
-> Unzip include and lib to c:\w64devkit\x86_64-w64-mingw32
+> Unzip include and lib to `C:\w64devkit\x86_64-w64-mingw32`
 
 3. Goto `C:\w64devkit` run `w64devkit.exe`，which launches a console
 
