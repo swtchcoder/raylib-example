@@ -15,35 +15,16 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          apt install -y build-essential make git
-          apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+          sudo apt install -y build-essential make git
+          sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
           git clone --depth 1 https://github.com/raysan5/raylib.git raylib
           cd raylib/src
           make PLATFORM=PLATFORM_DESKTOP
-          make install
+          sudo make install
       - name: Compile
         run: make build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: Linux binaries
-          path: bin/*
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: |
-          choco install -y mingw make git
-          git clone https://github.com/skeeto/w64devkit
-          git clone --depth=1 https://github.com/raysan5/raylib
-          cd raylib
-          make
-      - name: Compile
-        run: make build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Windows binaries
           path: bin/*
