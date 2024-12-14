@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-
-#include "raylib.h"
+#include <raylib.h>
 
 
 int main() {
