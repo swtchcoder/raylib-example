@@ -7,9 +7,6 @@ on:
       - "src/**.c"
       - ".github/workflows/build.yml"
       - "Makefile"
-strategy:
-  matrix:
-    compiler: []
 jobs:
   build-linux:
     runs-on: ubuntu-latest
