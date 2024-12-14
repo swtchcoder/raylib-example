@@ -40,8 +40,8 @@ jobs:
           Invoke-WebRequest -Uri 'https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip' -OutFile 'raylib.zip'
           tar -xf raylib.zip
           tar -xf w64devkit/w64devkit.zip
-          mv raylib*/include w64devkit/x86_64-w64-mingw32/
-          mv raylib*/lib w64devkit/x86_64-w64-mingw32/
+          mv raylib-5.5_win64_mingw-w64/include/* w64devkit/x86_64-w64-mingw32/
+          mv raylib-5.5_win64_mingw-w64/lib/* w64devkit/x86_64-w64-mingw32/
       - name: Compile
         run: w64devkit/bin/make.exe build
       - name: Upload artifact
