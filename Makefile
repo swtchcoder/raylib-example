@@ -10,7 +10,7 @@ else
 endif
 
 build: ${SRC}
-	if [ ! -d "bin" ]; then mkdir bin; fi
+	-mkdir bin
 	${GCC} -o bin/executable ${SRC} ${CFLAGS}
 
 run: build

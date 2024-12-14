@@ -42,8 +42,9 @@ jobs:
           tar -xf w64devkit/w64devkit.zip
           mv raylib-5.5_win64_mingw-w64/include/* w64devkit/x86_64-w64-mingw32/
           mv raylib-5.5_win64_mingw-w64/lib/* w64devkit/x86_64-w64-mingw32/
+          set PATH=%cd%/w64devkit/bin;%PATH%
       - name: Compile
-        run: w64devkit/bin/make.exe build
+        run: make build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
