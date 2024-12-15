@@ -30,9 +30,6 @@ jobs:
           path: bin/*
   build-windows:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        compiler: [clang]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -47,7 +44,7 @@ jobs:
           mv raylib-5.5_win64_mingw-w64/lib/* w64devkit/x86_64-w64-mingw32/lib/
           $Env:PATH += ";%cd%/w64devkit/bin"
       - name: Compile
-        run: make build
+        run: w64devkit/bin/make build CC=w64devkit/bin/gcc
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

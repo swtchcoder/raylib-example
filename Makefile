@@ -1,17 +1,23 @@
-GCC:=gcc
-SRC:=$(shell find src -type f -path "*.c")
-CFLAGS:=-Wall -lraylib 
+NAME=executable
+VERSION=0.0.0
+CC=gcc
+CFLAGS=
 
-UNAME:=$(shell uname -s)
-ifeq (${UNAME}, Linux)
+CFLAGS+=-lraylib
+SRC:=$(wildcard src/*.c)
+OUT:=bin/${NAME}-${VERSION}-${OS}-${PROCESSOR_ARCHITECTURE}
+
+ifeq (${OS}, Linux)
 	CFLAGS+=-lGL -lm -lpthread -ldl -lrt -lX11
-else
+else ifeq (${OS}, Windows_NT)
 	CFLAGS+=-lgdi32 -lwinmm
+	OUT:=${OUT}.exe
 endif
 
-build: ${SRC}
+
+build: ${SRC}	
 	-mkdir bin
-	${GCC} -o bin/executable ${SRC} ${CFLAGS}
+	${CC} -o ${OUT} ${SRC} ${CFLAGS}
 
 run: build
 	bin/*
