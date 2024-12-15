@@ -3,6 +3,14 @@ VERSION=0.0.0
 CC=gcc
 CFLAGS=
 
+ifeq (${OS},)
+	OS=${shell uname -s}
+endif
+
+ifeq (${PROCESSOR_ARCHITECTURE},)
+	PROCESSOR_ARCHITECTURE= ${shell uname -m}
+endif
+
 CFLAGS+=-lraylib
 SRC:=$(wildcard src/*.c)
 OUT:=bin/${NAME}-${VERSION}-${OS}-${PROCESSOR_ARCHITECTURE}
@@ -16,6 +24,7 @@ endif
 
 
 build: ${SRC}	
+	@echo ${OS} ${shell uname -p}
 	-mkdir bin
 	${CC} -o ${OUT} ${SRC} ${CFLAGS}
 
