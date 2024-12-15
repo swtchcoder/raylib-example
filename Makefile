@@ -1,7 +1,6 @@
 NAME=executable
 VERSION=0.0.0
 CC=gcc
-CFLAGS=
 
 ifeq (${OS},)
 	OS=${shell uname -s}
@@ -11,7 +10,7 @@ ifeq (${PROCESSOR_ARCHITECTURE},)
 	PROCESSOR_ARCHITECTURE= ${shell uname -m}
 endif
 
-CFLAGS+=-lraylib
+CFLAGS:=-Wall -lraylib
 SRC:=$(wildcard src/*.c)
 OUT:=bin/${NAME}-${VERSION}-${OS}-${PROCESSOR_ARCHITECTURE}
 

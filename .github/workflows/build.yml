@@ -8,12 +8,17 @@ on:
       - ".github/workflows/build.yml"
       - "Makefile"
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Install dependencies
+
+      - name: Install dependencies (Linux)
         run: |
           sudo apt install -y build-essential make git
           sudo apt install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
@@ -21,19 +26,8 @@ jobs:
           cd raylib/src
           make PLATFORM=PLATFORM_DESKTOP
           sudo make install
-      - name: Compile
-        run: make build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Linux binaries
-          path: bin/*
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Install dependencies
+        if: ${{ !contains(matrix.os, 'ubuntu') }}
+      - name: Install dependencies (Windows)
         run: |
           mkdir w64devkit
           Invoke-WebRequest -Uri 'https://github.com/skeeto/w64devkit/releases/download/v1.23.0/w64devkit-1.23.0.zip' -OutFile 'w64devkit.zip'
@@ -42,9 +36,15 @@ jobs:
           tar -xf w64devkit.zip
           mv raylib-5.5_win64_mingw-w64/include/* w64devkit/x86_64-w64-mingw32/include/
           mv raylib-5.5_win64_mingw-w64/lib/* w64devkit/x86_64-w64-mingw32/lib/
-          $Env:PATH += ";%cd%/w64devkit/bin"
-      - name: Compile
+        if: ${{ !contains(matrix.os, 'windows') }}
+
+      - name: Compile (Windows)
         run: w64devkit/bin/make build CC=w64devkit/bin/gcc
+        if: ${{ !contains(matrix.os, 'windows') }}
+      - name: Compile (Linux)
+        run: make build
+        if: ${{ !contains(matrix.os, 'ubuntu') }}
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
