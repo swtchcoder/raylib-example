@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <time.h>
-#include <stdio.h>
 
 #include "raylib.h"
 
@@ -9,7 +8,13 @@
 #define SCREEN_WIDTH  800
 #define SCREEN_HEIGHT 600
 
+#define RECTANGLE_WIDTH  200
+#define RECTANGLE_HEIGHT 100
+#define RECTANGLE_SPEED  15
+
 int main() {
+  srand(time(NULL));
+
   // timing
   float tick_interval = 1.0 / (double)TICK_RATE;
 
@@ -18,63 +23,50 @@ int main() {
 
   double elapsed_time;
   double leftover_time = 0.0;
-
-
-  const time_t seed = time(NULL);
-  srand(seed);
-
-  int screen_width = 800;
-  int screen_height = 600;
-
-  Rectangle* rect = malloc(sizeof(Rectangle));
-  if (rect == NULL) {
-    printf("Failed to allocate memory\n");
-    return 1;
-  }
-
-  rect->width = 200;
-  rect->height = 100;
   
-  unsigned int surfaceWidth = SCREEN_WIDTH - rect->width;
-  unsigned int surfaceHeight = SCREEN_HEIGHT - rect->height;
+  // objects
+  int box_width = SCREEN_WIDTH - RECTANGLE_WIDTH;
+  int box_height = SCREEN_HEIGHT - RECTANGLE_HEIGHT;
 
-  rect->x = rand() % surfaceWidth;
-  rect->y = rand() % surfaceHeight;
+  Vector2 rectangle_position_actual = {
+    rand() % box_width, 
+    rand() % box_height
+  };
+  Vector2 rectangle_position_previous = rectangle_position_actual;
+  Vector2 rectangle_speed_vector = {RECTANGLE_SPEED, RECTANGLE_SPEED};
 
-  Vector2 actual = {rect->x, rect->y};
-  Vector2 previous = actual;
-  Vector2 translation = {5, 5};
-
+  // window
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Bouncing rectangle");
+  SetWindowMinSize(RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
 
   while (!WindowShouldClose()) {
     if (IsWindowResized()) {
-      surfaceWidth  = GetScreenWidth() - rect->width;
-      surfaceHeight = GetScreenHeight() - rect->height;
-
-      if (actual.x > surfaceWidth) actual.x = surfaceWidth;
-      if (actual.y > surfaceHeight) actual.y = surfaceHeight;
+      box_width  = GetScreenWidth() - RECTANGLE_WIDTH;
+      box_height = GetScreenHeight() - RECTANGLE_HEIGHT;
     }
 
     // timing
     current_time = clock();
     elapsed_time = (double)(current_time - start_time) / CLOCKS_PER_SEC;
-    start_time = current_time;
     leftover_time += elapsed_time; 
+    start_time = current_time;
 
     while (leftover_time >= tick_interval) {
-      previous = actual;
+      if (rectangle_position_actual.x > box_width) rectangle_position_actual.x = box_width;
+      if (rectangle_position_actual.y > box_height) rectangle_position_actual.y = box_height;
+
+      rectangle_position_previous = rectangle_position_actual;
       Vector2 next = {
-        actual.x + translation.x, 
-        actual.y + translation.y
+        rectangle_position_actual.x + rectangle_speed_vector.x, 
+        rectangle_position_actual.y + rectangle_speed_vector.y
       };
 
-      if (next.x < 0 || next.x > surfaceWidth)  translation.x *= -1;
-      if (next.y < 0 || next.y > surfaceHeight) translation.y *= -1;
+      if (next.x < 0 || next.x > box_width)  rectangle_speed_vector.x *= -1;
+      if (next.y < 0 || next.y > box_height) rectangle_speed_vector.y *= -1;
 
-      actual.x += translation.x;
-      actual.y += translation.y;
+      rectangle_position_actual.x += rectangle_speed_vector.x;
+      rectangle_position_actual.y += rectangle_speed_vector.y;
 
       leftover_time -= tick_interval;
     }
@@ -82,21 +74,20 @@ int main() {
     // interpolation
     float alpha = leftover_time / tick_interval;
 
-    float interpolatedX = previous.x * (1 - alpha) + actual.x * alpha;
-    float interpolatedY = previous.y * (1 - alpha) + actual.y * alpha;
+    float interpolatedX = rectangle_position_previous.x * (1 - alpha) + rectangle_position_actual.x * alpha;
+    float interpolatedY = rectangle_position_previous.y * (1 - alpha) + rectangle_position_actual.y * alpha;
 
     // drawing
     BeginDrawing();
-      ClearBackground(RAYWHITE);
+    ClearBackground(RAYWHITE);
 
-      DrawRectangle(interpolatedX, interpolatedY, rect->width, rect->height, RED);
+    DrawRectangle(interpolatedX, interpolatedY, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RED);
 
-      DrawFPS(10, 10);
+    DrawFPS(10, 10);
     EndDrawing();
   }
 
   CloseWindow();
-  free(rect);
 
   return 0;
 }
