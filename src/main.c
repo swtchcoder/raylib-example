@@ -6,6 +6,9 @@
 
 #define TICK_RATE 20
 
+#define SCREEN_WIDTH  800
+#define SCREEN_HEIGHT 600
+
 int main() {
   // timing
   float tick_interval = 1.0 / (double)TICK_RATE;
@@ -17,12 +20,11 @@ int main() {
   double leftover_time = 0.0;
 
 
-  const unsigned int seed = time(NULL);
+  const time_t seed = time(NULL);
   srand(seed);
-  printf("seed: %d\n", seed);
 
-  const unsigned int screenWidth = 800;
-  const unsigned int screenHeight = 600;
+  int screen_width = 800;
+  int screen_height = 600;
 
   Rectangle* rect = malloc(sizeof(Rectangle));
   if (rect == NULL) {
@@ -33,8 +35,8 @@ int main() {
   rect->width = 200;
   rect->height = 100;
   
-  unsigned int surfaceWidth = screenWidth - rect->width;
-  unsigned int surfaceHeight = screenHeight - rect->height;
+  unsigned int surfaceWidth = SCREEN_WIDTH - rect->width;
+  unsigned int surfaceHeight = SCREEN_HEIGHT - rect->height;
 
   rect->x = rand() % surfaceWidth;
   rect->y = rand() % surfaceHeight;
@@ -43,10 +45,18 @@ int main() {
   Vector2 previous = actual;
   Vector2 translation = {5, 5};
 
-  InitWindow(screenWidth, screenHeight, "Bouncing rectangle");
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+  InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Bouncing rectangle");
 
   while (!WindowShouldClose()) {
+    if (IsWindowResized()) {
+      surfaceWidth  = GetScreenWidth() - rect->width;
+      surfaceHeight = GetScreenHeight() - rect->height;
+
+      if (actual.x > surfaceWidth) actual.x = surfaceWidth;
+      if (actual.y > surfaceHeight) actual.y = surfaceHeight;
+    }
+
     // timing
     current_time = clock();
     elapsed_time = (double)(current_time - start_time) / CLOCKS_PER_SEC;
@@ -60,7 +70,7 @@ int main() {
         actual.y + translation.y
       };
 
-      if (next.x < 0 || next.x > surfaceWidth) translation.x *= -1;
+      if (next.x < 0 || next.x > surfaceWidth)  translation.x *= -1;
       if (next.y < 0 || next.y > surfaceHeight) translation.y *= -1;
 
       actual.x += translation.x;
