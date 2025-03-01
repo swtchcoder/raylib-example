@@ -1,9 +1,15 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #include "interval_clock.h"
 
 void interval_clock_init(interval_clock_t* interval_clock, double tick_rate) {
+  if (tick_rate <= 0) {
+    printf("Invalid tick rate\n");
+    exit(1);
+  }
+
   interval_clock->tick_interval = 1.0 / tick_rate;
   interval_clock->start_time = clock();
   interval_clock->accumulated_time = 0.0;
