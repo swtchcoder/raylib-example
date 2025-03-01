@@ -3,6 +3,8 @@
 
 #include "raylib.h"
 
+#include "interval_clock.h"
+
 #define TICK_RATE 20
 
 #define SCREEN_WIDTH  800
@@ -14,16 +16,10 @@
 
 int main() {
   srand(time(NULL));
-
-  // timing
-  float tick_interval = 1.0 / (double)TICK_RATE;
-
-  clock_t start_time = clock();
-  clock_t current_time;
-
-  double elapsed_time;
-  double leftover_time = 0.0;
   
+  interval_clock_t physic_clock;
+  interval_clock_init(&physic_clock, TICK_RATE);
+
   // objects
   int box_width = SCREEN_WIDTH - RECTANGLE_WIDTH;
   int box_height = SCREEN_HEIGHT - RECTANGLE_HEIGHT;
@@ -47,12 +43,8 @@ int main() {
     }
 
     // timing
-    current_time = clock();
-    elapsed_time = (double)(current_time - start_time) / CLOCKS_PER_SEC;
-    leftover_time += elapsed_time; 
-    start_time = current_time;
-
-    while (leftover_time >= tick_interval) {
+    int missed_ticks = interval_clock_update(&physic_clock);
+    for (int i = 0; i < missed_ticks; i++) {
       if (rectangle_position_actual.x > box_width) rectangle_position_actual.x = box_width;
       if (rectangle_position_actual.y > box_height) rectangle_position_actual.y = box_height;
 
@@ -67,12 +59,11 @@ int main() {
 
       rectangle_position_actual.x += rectangle_speed_vector.x;
       rectangle_position_actual.y += rectangle_speed_vector.y;
-
-      leftover_time -= tick_interval;
     }
-
+    
     // interpolation
-    float alpha = leftover_time / tick_interval;
+    float alpha = physic_clock.accumulated_time / physic_clock.tick_interval;
+    if (alpha > 1.0f) alpha = 1.0f;
 
     float interpolatedX = rectangle_position_previous.x * (1 - alpha) + rectangle_position_actual.x * alpha;
     float interpolatedY = rectangle_position_previous.y * (1 - alpha) + rectangle_position_actual.y * alpha;
@@ -85,6 +76,8 @@ int main() {
 
     DrawFPS(10, 10);
     EndDrawing();
+
+    continue;
   }
 
   CloseWindow();
