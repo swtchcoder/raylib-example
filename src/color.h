@@ -34,10 +34,10 @@ color_t color_generate_random();
  *
  * where R, G, and B are the normalized (0 to 1) values of the color_t components.
  *
- * @param color_t The color_t whose luminance is to be calculated.
+ * @param color The color_t whose luminance is to be calculated.
  * @return A double representing the luminance value (0 to 1).
  */
-double color_luminance_calculate(color_t color_t);
+double color_luminance_calculate(color_t color);
 
 /**
  * @brief Adjusts the luminance of a color_t while preserving its hue.
@@ -50,11 +50,11 @@ double color_luminance_calculate(color_t color_t);
  * Each color_t component is then scaled by this factor while ensuring 
  * the values remain within the 0-255 range.
  *
- * @param color_t The input color_t.
+ * @param color The input color_t.
  * @param targetLuminance The desired luminance value (0 to 1).
  * @return A new color_t struct with adjusted luminance.
  */
-color_t color_luminance_adjust(color_t color_t, double targetLuminance);
+color_t color_luminance_adjust(color_t color, double targetLuminance);
 
 /**
  * @brief Linearly interpolates between two values.
