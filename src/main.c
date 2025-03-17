@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 
 #include "raylib.h"
 
 #include "interval_clock.h"
+#include "color.h"
 
 #define TICK_RATE 20
 
@@ -14,8 +16,31 @@
 #define RECTANGLE_HEIGHT 100
 #define RECTANGLE_SPEED  15
 
+void DrawFPSWithColor(int posX, int posY, Color color) {
+  char fpsText[10];
+  sprintf(fpsText, "%d FPS", GetFPS());
+
+  DrawTextEx(GetFontDefault(), fpsText, (Vector2){posX, posY}, 20, 2, color);
+}
+
 int main() {
   srand(time(NULL));
+
+  color_t _color_palette[3];
+  Color color_palette[3];
+
+  color_t base_color = color_generate_random();
+  printf("%d\n", color_luminance_adjust(base_color, 0.8).r);
+  color_gradient_init(
+    (color_t*)_color_palette, 
+    color_luminance_adjust(base_color, 0.8),
+    color_luminance_adjust(base_color, 0.2),
+    3
+  );
+
+  for (int i = 0; i < 3; i++) {
+    color_palette[i] = (Color){_color_palette[i].r, _color_palette[i].g, _color_palette[i].b, 255};
+  }
   
   interval_clock_t physic_clock;
   interval_clock_init(&physic_clock, TICK_RATE);
@@ -70,11 +95,11 @@ int main() {
 
     // drawing
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(color_palette[2]);
 
-    DrawRectangle(interpolatedX, interpolatedY, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, RED);
+    DrawRectangle(interpolatedX, interpolatedY, RECTANGLE_WIDTH, RECTANGLE_HEIGHT, color_palette[1]);
 
-    DrawFPS(10, 10);
+    DrawFPSWithColor(10, 10, color_palette[0]);
     EndDrawing();
   }
 
